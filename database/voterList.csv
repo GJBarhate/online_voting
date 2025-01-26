@@ -1,2 +1,4 @@
 ,voter_id,Name,Gender,Zone,City,Passw,hasVoted
-
+0,10001,Gaurav,Male,West,Malkapur,abcd,1
+1,10002,Kaustubh,Male,Mumai,East,abcd,1
+2,10003,Vivek,Male,east,amh,abd,1
