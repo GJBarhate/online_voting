@@ -1,2 +1,3 @@
 ,voter_id,Name,Gender,Zone,City,Passw,hasVoted
 0,10001,Gaurav,Male,West,Malkapur,1234,0
+1,10002,Kautstubh,Male,Mumbai,West,1234,0
