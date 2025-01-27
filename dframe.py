@@ -1,8 +1,13 @@
+
 import pandas as pd
 from pathlib import Path
+import customtkinter as ctk
 
 # path = Path("C:/Users/Desktop/Sem-5/CS301 CN/Project/Voting/database")
 path = Path("database")
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
 
 def count_reset():
     df=pd.read_csv(path/'voterList.csv')
@@ -107,3 +112,4 @@ def taking_data_voter(name,gender,zone,city,passw):
     df.to_csv(path/'voterList.csv')
 
     return vid
+

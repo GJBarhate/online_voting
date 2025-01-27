@@ -1,66 +1,71 @@
 import tkinter as tk
-import dframe as df
 from tkinter import *
-from dframe import *
-from PIL import ImageTk,Image
+from PIL import ImageTk, Image
+import dframe as df
 
-def resetAll(root,frame1):
-    #df.count_reset()
-    #df.reset_voter_list()
-    #df.reset_cand_list()
-    Label(frame1, text="").grid(row = 10,column = 0)
-    msg = Message(frame1, text="Reset Complete", width=500)
-    msg.grid(row = 11, column = 0, columnspan = 5)
+def reset_all(root, frame):
+    try:
+        # Uncomment these lines if the reset logic is implemented in `dframe`
+        # df.count_reset()
+        # df.reset_voter_list()
+        # df.reset_cand_list()
 
-def showVotes(root,frame1):
+        Label(frame, text="").grid(row=10, column=0)
+        msg = Message(frame, text="All data has been successfully reset!", width=500, fg="green",bg="#f2f2f2", font=('Helvetica', 12, 'bold'))
+        msg.grid(row=11, column=0, columnspan=5)
+    except Exception as e:
+        msg = Message(frame, text=f"Error: {str(e)}", width=500, fg="red", font=("Arial", 10, "italic"))
+        msg.grid(row=11, column=0, columnspan=5)
 
-    result = df.show_result()
-    root.title("Votes")
-    for widget in frame1.winfo_children():
-        widget.destroy()
+def showVotes(root, frame):
+    try:
+        # Fetch results from the data frame
+        results = df.show_result()
+        if not results:
+            raise ValueError("No results available. Please ensure voting data exists.")
 
-    Label(frame1, text="Vote Count", font=('Helvetica', 18, 'bold')).grid(row = 0, column = 1, rowspan=1)
-    Label(frame1, text="").grid(row = 1,column = 0)
+        root.title("Election Results")
+        for widget in frame.winfo_children():
+            widget.destroy()
 
-    vote = StringVar(frame1,"-1")
+        # Add a title
+        Label(frame, text="Election Results", font=("Helvetica", 18, "bold"), fg="#0033A0").grid(row=0, column=1, rowspan=1)
+        Label(frame, text="").grid(row=1, column=0)
 
-    bjpLogo = ImageTk.PhotoImage((Image.open("img/bjp.png")).resize((35,35),Image.LANCZOS))
-    bjpImg = Label(frame1, image=bjpLogo).grid(row = 2,column = 0)
+        # Dictionary for dynamic UI element generation
+        parties = {
+            "bjp": {"name": "BJP", "image": "img/bjp.png"},
+            "cong": {"name": "Congress", "image": "img/cong.png"},
+            "aap": {"name": "AAP", "image": "img/aap.png"},
+            "ss": {"name": "Shiv Sena", "image": "img/ss.png"},
+            "nota": {"name": "NOTA", "image": "img/nota.png"}
+        }
 
-    congLogo = ImageTk.PhotoImage((Image.open("img/cong.png")).resize((25,38),Image.LANCZOS))
-    congImg = Label(frame1, image=congLogo).grid(row = 3,column = 0)
+        row = 2
+        for key, details in parties.items():
+            try:
+                # Load party logos dynamically
+                logo = ImageTk.PhotoImage(Image.open(details["image"]).resize((40, 40), Image.LANCZOS))
+                Label(frame, image=logo).grid(row=row, column=0)
+                # Keep a reference to avoid garbage collection of images
+                frame.image = logo
+            except FileNotFoundError:
+                Label(frame, text="(Image Missing)", fg="red").grid(row=row, column=0)
 
-    aapLogo = ImageTk.PhotoImage((Image.open("img/aap.png")).resize((45,30),Image.LANCZOS))
-    aapImg = Label(frame1, image=aapLogo).grid(row = 4,column = 0)
+            # Add party name and vote count
+            Label(frame, text=f"{details['name']}:", font=("Arial", 12, "bold")).grid(row=row, column=1)
+            Label(frame, text=results.get(key, "N/A"), font=("Arial", 12)).grid(row=row, column=2)
 
-    ssLogo = ImageTk.PhotoImage((Image.open("img/ss.png")).resize((40,35),Image.LANCZOS))
-    ssImg = Label(frame1, image=ssLogo).grid(row = 5,column = 0)
+            row += 1
 
-    notaLogo = ImageTk.PhotoImage((Image.open("img/nota.png")).resize((35,25),Image.LANCZOS))
-    notaImg = Label(frame1, image=notaLogo).grid(row = 6,column = 0)
+        frame.pack()
+    except Exception as e:
+        Label(frame, text=f"Error: {str(e)}", fg="red", font=("Arial", 12)).grid(row=2, column=0, columnspan=3)
 
-
-    Label(frame1, text="BJP              :       ", font=('Helvetica', 12, 'bold')).grid(row = 2, column = 1)
-    Label(frame1, text=result['bjp'], font=('Helvetica', 12, 'bold')).grid(row = 2, column = 2)
-
-    Label(frame1, text=" Cong             :          ", font=('Helvetica', 12, 'bold')).grid(row = 3, column = 1)
-    Label(frame1, text=result['cong'], font=('Helvetica', 12, 'bold')).grid(row = 3, column = 2)
-
-    Label(frame1, text=" AAP               :          ", font=('Helvetica', 12, 'bold')).grid(row = 4, column = 1)
-    Label(frame1, text=result['aap'], font=('Helvetica', 12, 'bold')).grid(row = 4, column = 2)
-
-    Label(frame1, text=" Shiv Sena    :          ", font=('Helvetica', 12, 'bold')).grid(row = 5, column = 1)
-    Label(frame1, text=result['ss'], font=('Helvetica', 12, 'bold')).grid(row = 5, column = 2)
-
-    Label(frame1, text=" NOTA            :          ", font=('Helvetica', 12, 'bold')).grid(row = 6, column = 1)
-    Label(frame1, text=result['nota'], font=('Helvetica', 12, 'bold')).grid(row = 6, column = 2)
-
-    frame1.pack()
-    root.mainloop()
-
-
+# Uncomment for testing purposes
 # if __name__ == "__main__":
-#         root = Tk()
-#         root.geometry('500x500')
-#         frame1 = Frame(root)
-#         showVotes(root,frame1)
+#     root = Tk()
+#     root.geometry('500x500')
+#     frame = Frame(root)
+#     display_results(root, frame)
+#     root.mainloop()

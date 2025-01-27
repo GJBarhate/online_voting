@@ -5,6 +5,11 @@ from tkinter import ttk
 from Admin import *
 from tkinter import *
 from dframe import *
+import customtkinter as ctk
+
+ctk.set_appearance_mode("dark")  # Set dark mode for the app
+ctk.set_default_color_theme("blue")  # Set default theme to blue
+
 
 def reg_server(root,frame1,name,sex,zone,city,passw):
     if(passw=='' or passw==' '):

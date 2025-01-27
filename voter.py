@@ -2,6 +2,8 @@ import tkinter as tk
 import socket
 from tkinter import *
 from VotingPage import votingPg
+import tkinter as tk
+from tkinter import ttk
 
 # Function to establish connection to the server
 def establish_connection():
@@ -26,7 +28,7 @@ def failed_return(root, frame1, client_socket, message):
     for widget in frame1.winfo_children():
         widget.destroy()
     message = message + "... \nTry again..."
-    Label(frame1, text=message, font=('Helvetica', 12, 'bold')).grid(row=1, column=1)
+    Label(frame1, text=message, font=('Helvetica', 14, 'bold'),fg="red").grid(row=1, column=1)
     try:
         client_socket.close()
     except:
@@ -60,36 +62,45 @@ def log_server(root, frame1, client_socket, voter_ID, password):
 
 
 # Function to handle the login window
+
 def voterLogin(root, frame1):
     client_socket = establish_connection()
     if client_socket == 'Failed':
-        message = "Connection failed"
-        failed_return(root, frame1, client_socket, message)
+        failed_return(root, frame1, client_socket, "Connection failed")
         return
 
     root.title("Voter Login")
     for widget in frame1.winfo_children():
         widget.destroy()
 
-    Label(frame1, text="Voter Login", font=('Helvetica', 18, 'bold')).grid(row=0, column=2, rowspan=1)
-    Label(frame1, text="").grid(row=1, column=0)
-    Label(frame1, text="Voter ID:      ", anchor="e", justify=LEFT).grid(row=2, column=0)
-    Label(frame1, text="Password:   ", anchor="e", justify=LEFT).grid(row=3, column=0)
+    # Add styles for a modern look
+    style = ttk.Style()
+    style.configure("TLabel", font=("Helvetica", 14))
+    style.configure("TButton", font=("Helvetica", 12, "bold"), foreground="white", background="#4CAF50")
+    style.configure("TEntry", font=("Helvetica", 12))
 
+    # Title
+    ttk.Label(frame1, text="Voter Login", font=("Helvetica", 20, "bold"), foreground="#4CAF50").pack(pady=10)
+
+    # Voter ID Field
     voter_ID = tk.StringVar()
+    ttk.Label(frame1, text="Voter ID:", font=("Helvetica", 14)).pack(anchor="w", padx=20)
+    ttk.Entry(frame1, textvariable=voter_ID, font=("Helvetica", 14), width=30).pack(pady=5)
+
+    # Password Field
     password = tk.StringVar()
+    ttk.Label(frame1, text="Password:", font=("Helvetica", 14)).pack(anchor="w", padx=20)
+    ttk.Entry(frame1, textvariable=password, font=("Helvetica", 14), width=30, show="*").pack(pady=5)
 
-    e1 = Entry(frame1, textvariable=voter_ID)
-    e1.grid(row=2, column=2)
-    e3 = Entry(frame1, textvariable=password, show='*')
-    e3.grid(row=3, column=2)
+    # Submit Button
+    ttk.Button(
+        frame1, text="Login", style="TButton", command=lambda: log_server(root, frame1, client_socket, voter_ID.get(), password.get())
+    ).pack(pady=20)
 
-    sub = Button(frame1, text="Login", width=10, command=lambda: log_server(root, frame1, client_socket, voter_ID.get(), password.get()))
-    Label(frame1, text="").grid(row=4, column=0)
-    sub.grid(row=5, column=3, columnspan=2)
-
-    frame1.pack()
+    # Frame Packing
+    frame1.pack(pady=20, padx=20, fill="both", expand=True)
     root.mainloop()
+
 
 
 # Uncomment below to run the application
